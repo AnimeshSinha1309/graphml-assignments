@@ -4,6 +4,7 @@ import tqdm.auto as tqdm
 
 def training(model, data):
     optimizer = torch.optim.Adam(model.parameters(), lr=0.005, weight_decay=0.0005)
+    loss_fn = torch.nn.CrossEntropyLoss()
     training_losses, validation_losses, training_accuracy, validation_accuracy = (
         [],
         [],
@@ -12,7 +13,7 @@ def training(model, data):
     )
 
     with tqdm.trange(1, 200 + 1) as iterator:
-        iterator.set_description("Training of CurvGN")
+        iterator.set_description("Training")
 
         for _epoch in iterator:
             model.train()
@@ -24,17 +25,13 @@ def training(model, data):
                     data.y[data.train_mask],
                 ).float()
             )
-            loss = torch.nn.functional.nll_loss(
-                predictions[data.train_mask], data.y[data.train_mask]
-            )
+            loss = loss_fn(predictions[data.train_mask], data.y[data.train_mask])
             loss.backward()
             optimizer.step()
 
             model.eval()
             predictions = model(data.x, data.edge_index)
-            val_loss = torch.nn.functional.nll_loss(
-                predictions[data.val_mask], data.y[data.val_mask]
-            )
+            val_loss = loss_fn(predictions[data.val_mask], data.y[data.val_mask])
             val_accuracy = torch.mean(
                 torch.eq(
                     torch.argmax(predictions[data.val_mask], dim=1),
