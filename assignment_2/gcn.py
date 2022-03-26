@@ -57,4 +57,4 @@ class GraphConvolutionalNetwork(GraphNeuralNetwork):
         return result_tensor
 
     def output(self, node_feature_tensor):
-        return self.output_nn(node_feature_tensor)
+        return torch.nn.Softmax(dim=1)(self.output_nn(node_feature_tensor))

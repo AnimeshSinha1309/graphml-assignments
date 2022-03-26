@@ -17,10 +17,8 @@ class GraphNeuralNetwork(torch.nn.Module, abc.ABC):
         x = self.initialize(x)
         for layer_idx in range(self.layers):
             aggregated_neighbors = [[] for _ in range(x.shape[0])]
-            for edge in edge_index:
-                i, j = edge[0], edge[1]
-                aggregated_neighbors[i].append(x[j])
-                aggregated_neighbors[j].append(x[i])
+            for edge in edge_index.T:
+                aggregated_neighbors[edge[0]].append(x[edge[1]])
 
             final_outputs = []
             for i in range(len(x)):

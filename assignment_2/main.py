@@ -11,4 +11,6 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 network = network.to(device)
 df.data = df.data.to(device)
 
+print(df.data.edge_index[0])
+
 training(network, df.data)
