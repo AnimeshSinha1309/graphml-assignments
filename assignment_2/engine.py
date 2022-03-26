@@ -41,10 +41,10 @@ def training(model, data):
             optimizer.step()
 
             iterator.set_postfix(
-                training_loss=loss.item(),
-                validation_loss=val_loss.item(),
-                training_accuracy=accuracy.item(),
-                val_accuracy=val_accuracy.item(),
+                train_loss=loss.item(),
+                val_loss=val_loss.item(),
+                train_acc=accuracy.item(),
+                val_acc=val_accuracy.item(),
             )
             training_losses.append(loss.item())
             validation_losses.append(val_loss.item())

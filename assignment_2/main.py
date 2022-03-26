@@ -1,11 +1,11 @@
 import torch
 import torch_geometric as pyg
 
-from base import GraphConvolutionalLayer
+from gcn import GraphConvolutionalNetwork
 from engine import training
 
 df = pyg.datasets.Planetoid("datasets/planetoid", "cora")
-network = GraphConvolutionalLayer(df.data.x.shape[1], 7)
+network = GraphConvolutionalNetwork(df.data.x.shape[1], 10, 7, 2)
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 network = network.to(device)
