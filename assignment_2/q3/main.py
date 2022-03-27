@@ -18,13 +18,13 @@ np.random.seed(0)
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Process some integers.")
     parser.add_argument(
-        "--task", default="citeseer", help="Choose the task (citeseer, gnncompare, rnn)"
+        "--task", default="citeseer", help="Choose the task (gcn, gin, rnn)"
     )
     parser.add_argument(
-        "--layers", default=3, type=int, help="Number of Layers to be used in the GNN"
+        "--layers", default=2, type=int, help="Number of Layers to be used in the GNN"
     )
     parser.add_argument(
-        "--dims", default=10, type=int, help="The Dimentions of each layer in the GNN"
+        "--dims", default=16, type=int, help="The Dimentions of each layer in the GNN"
     )
     parser.add_argument(
         "--normalizer",
@@ -36,7 +36,7 @@ if __name__ == "__main__":
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    if args.task == "citeseer":
+    if args.task == "gcn":
         df = pyg.datasets.Planetoid("datasets/planetoid", "citeseer")
         network = GraphConvolutionalNetwork(
             df.data.x.shape[1],
@@ -48,9 +48,9 @@ if __name__ == "__main__":
         network = network.to(device)
         df.data = df.data.to(device)
         training(network, df.data)
-    elif args.task == "gnncompare":
+    elif args.task == "gin":
         df = pyg.datasets.Planetoid("datasets/planetoid", "citeseer")
-        network = GraphIsomorphismNetwork(df.data.x.shape[1], args.dims, 7, args.layers)
+        network = GraphIsomorphismNetwork(df.data.x.shape[1], args.dims, 6, args.layers)
         network = network.to(device)
         df.data = df.data.to(device)
         training(network, df.data)

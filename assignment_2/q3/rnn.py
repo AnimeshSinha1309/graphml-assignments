@@ -66,6 +66,6 @@ class RecurrentNeuralNetwork(GraphNeuralNetwork):
         return full_tensor
 
     def output(self, node_feature_tensor):
-        node_feature_tensor = node_feature_tensor[-1, 1:]
+        node_feature_tensor = node_feature_tensor[0, 1:]
         output_tensor = self.output_activation(self.output_nn(node_feature_tensor))
         return output_tensor

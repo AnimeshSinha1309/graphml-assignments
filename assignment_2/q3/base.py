@@ -24,6 +24,9 @@ class GraphNeuralNetwork(torch.nn.Module, abc.ABC):
         x = self.initialize(x)
         degrees = np.zeros(shape=(len(x),))
 
+        for edge in edge_index.T:
+            degrees[edge[0]] += 1
+
         for layer_idx in range(self.layers):
             aggregated_neighbors = [[] for _ in range(x.shape[0])]
             for edge in edge_index.T:
@@ -31,7 +34,6 @@ class GraphNeuralNetwork(torch.nn.Module, abc.ABC):
                     x[edge[1]]
                     / self.get_degree_normalizer(degrees[edge[0]], degrees[edge[1]])
                 )
-                degrees[edge[0]] += 1
 
             final_outputs = []
             for i in range(len(x)):

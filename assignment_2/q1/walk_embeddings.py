@@ -4,6 +4,7 @@ import numpy as np
 class Graph:
     def __init__(self, number_of_nodes, edge_list):
         self.num_nodes = number_of_nodes
+        self.edge_list = edge_list
         self.adj = [[] for i in range(self.num_nodes)]
         for u, v in edge_list:
             self.adj[u].append(v)
@@ -30,7 +31,7 @@ class Graph:
         return ring_elements
 
     def degree_sequence(self, u, k):
-        return list(map(lambda x: len(self.adj[x]), self.ring(u, k)))
+        return sorted(list(map(lambda x: len(self.adj[x]), self.ring(u, k))))
 
     def layer_similarity(self, u, v, k):
         x = self.degree_sequence(u, k)
@@ -44,6 +45,7 @@ class Graph:
         if u == v:
             return 0
         answer = 0
+        print
         for i in range(k + 1):
             answer += self.layer_similarity(u, v, i)
         return answer + 0.00001
@@ -100,10 +102,9 @@ class Graph:
                         for v in self.adj[node]
                     ]
                 )
-                walk.append(
-                    np.random.choice(self.adj[node], p=weights / np.sum(weights))
-                )
                 previous_node = node
+                node = np.random.choice(self.adj[node], p=weights / np.sum(weights))
+                walk.append(node)
             walks.append(walk)
         return walks
 
@@ -113,27 +114,35 @@ class Graph:
             walk = []
             node = start
             for d in range(distance):
-                walk.append(np.random.choice(self.adj[node]))
+                walk.append(node)
+                node = np.random.choice(self.adj[node])
             walks.append(walk)
         return walks
 
 
-g = Graph(
-    number_of_nodes=8,
-    edge_list=[
-        [6, 2],
-        [6, 4],
-        [6, 5],
-        [1, 4],
-        [1, 5],
-        [2, 3],
-        [2, 4],
-        [4, 5],
-        [3, 7],
-        [7, 0],
-    ],
-)
+if __name__ == "__main__":
+    g = Graph(
+        number_of_nodes=8,
+        edge_list=[
+            [0, 1], 
+            [0, 2],
+            [0, 3],
+            [0, 4],
+            [1, 5],
+            [1, 6],
+            [1, 7],
+            [7, 6],
+        ],
+    )
+    print(g.deepwalk_walk(5, 2, 4))
+    print(g.node2vec_walk(5, 2, 4))
+    print(g.struct2vec_walk(5, 3, 4))
 
-print(g.deepwalk_walk(5, 2, 3))
-print(g.node2vec_walk(5, 2, 3))
-print(g.struct2vec_walk(5, 2, 3))
+    # for k in range(3):
+    #     print(g.layer_similarity(5, 1, k), g.degree_sequence(5, k), g.degree_sequence(1, k))
+
+    for k in range(3):
+        print(f"==========(k={k})==========")
+        for i in [5,]:
+            for j in range(g.num_nodes):
+                print(i, j, np.round(g.similarity(i, j, k)))
