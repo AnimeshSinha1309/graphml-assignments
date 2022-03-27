@@ -69,8 +69,3 @@ class RecurrentNeuralNetwork(GraphNeuralNetwork):
         node_feature_tensor = node_feature_tensor[-1, 1:]
         output_tensor = self.output_activation(self.output_nn(node_feature_tensor))
         return output_tensor
-
-
-if __name__ == "__main__":
-    rnn = RecurrentNeuralNetwork(1000, 100, 2)
-    rnn_train(rnn)

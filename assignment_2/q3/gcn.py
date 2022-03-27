@@ -4,8 +4,12 @@ from base import GraphNeuralNetwork
 
 
 class GraphConvolutionalNetwork(GraphNeuralNetwork):
-    def __init__(self, in_channels, hidden_channels, out_channels, layers, adj_normalizer="row"):
-        super().__init__(in_channels, hidden_channels, out_channels, layers, adj_normalizer)
+    def __init__(
+        self, in_channels, hidden_channels, out_channels, layers, adj_normalizer="row"
+    ):
+        super().__init__(
+            in_channels, hidden_channels, out_channels, layers, adj_normalizer
+        )
 
         self.input_nn = torch.nn.Linear(
             in_channels,

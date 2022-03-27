@@ -1,12 +1,15 @@
 import abc
 
 import torch
+import numpy as np
 
 from engine import training
 
 
 class GraphNeuralNetwork(torch.nn.Module, abc.ABC):
-    def __init__(self, in_channels, hidden_channels, out_channels, layers, adj_normalizer="row"):
+    def __init__(
+        self, in_channels, hidden_channels, out_channels, layers, adj_normalizer="row"
+    ):
         super().__init__()
 
         assert adj_normalizer in ["row", "column", "symmetric", "none"]
@@ -19,38 +22,46 @@ class GraphNeuralNetwork(torch.nn.Module, abc.ABC):
 
     def forward(self, x, edge_index):
         x = self.initialize(x)
-        degrees = torch.zeros(size=(len(x),))
+        degrees = np.zeros(shape=(len(x),))
 
         for layer_idx in range(self.layers):
             aggregated_neighbors = [[] for _ in range(x.shape[0])]
             for edge in edge_index.T:
                 aggregated_neighbors[edge[0]].append(
                     x[edge[1]]
+                    / self.get_degree_normalizer(degrees[edge[0]], degrees[edge[1]])
                 )
                 degrees[edge[0]] += 1
 
             final_outputs = []
             for i in range(len(x)):
                 aggregated_neighbor_tensor = self.aggregate(
-                    aggregated_neighbors[i],
-                    layer_idx
+                    aggregated_neighbors[i], layer_idx
                 )
                 final_outputs.append(
-                    self.combine(aggregated_neighbor_tensor, x[i], layer_idx,)
+                    self.combine(
+                        aggregated_neighbor_tensor,
+                        x[i],
+                        layer_idx,
+                    )
                 )
             x = torch.stack(final_outputs, dim=0)
         x = self.output(x)
         return x
 
     def get_degree_normalizer(self, degree_u, degree_v):
+        degree_u += 1
+        degree_v += 1
         if self.adj_normalizer == "row":
             return degree_u
-        if self.adj_normalizer == "column":
+        elif self.adj_normalizer == "column":
             return degree_v
-        if self.adj_normalizer == "symmetric":
+        elif self.adj_normalizer == "symmetric":
             return (degree_v * degree_u) ** 0.5
-        if self.adj_normalizer == "none":
+        elif self.adj_normalizer == "none":
             return 1
+        else:
+            raise ValueError("Invalid Adjacency Normalizer")
 
     @abc.abstractmethod
     def initialize(self, node_feature_tensor):
