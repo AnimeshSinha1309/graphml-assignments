@@ -18,7 +18,7 @@ np.random.seed(0)
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Process some integers.")
     parser.add_argument(
-        "--task", default="citeseer", help="Choose the task (gcn, gin, rnn)"
+        "--task", default="gcn", help="Choose the task (gcn, gin, rnn)"
     )
     parser.add_argument(
         "--layers", default=2, type=int, help="Number of Layers to be used in the GNN"

@@ -7,15 +7,17 @@ if __name__ == "__main__":
     g = Graph(
         number_of_nodes=8,
         edge_list=[
-            [0, 1], 
-            [0, 2],
-            [0, 3],
-            [0, 4],
-            [1, 5],
-            [1, 6],
-            [1, 7],
-            [7, 6],
-        ],
+                    [0, 2],
+                    [0, 4],
+                    [0, 5],
+                    [1, 4],
+                    [1, 5],
+                    [2, 3],
+                    [2, 4],
+                    [4, 5],
+                    [4, 6],
+                    [4, 7]
+                            ],
     )
     mat = np.zeros((g.num_nodes, g.num_nodes,))
     for u, v in g.edge_list:

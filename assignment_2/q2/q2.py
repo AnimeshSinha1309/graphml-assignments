@@ -25,7 +25,6 @@ edge_index = torch.tensor([
     [3, 8],
     [6, 9],
 ])
-targets = torch.randint(0, 3, (10, 1))
 
 def matricize(data):
     print("\\begin{bmatrix}")
@@ -36,23 +35,24 @@ def matricize(data):
     print("\\end{bmatrix}")
 
 print("TARGETS:")
-matricize(targets)
 
-gcn = torch.nn.ModuleList([
-    GCNIllustrated(init=[[1.0, 1.5], [2.0, 1.0]]),
-    GCNIllustrated(init=[[0.3, 1.9], [0.6, 2.2]]),
-    GCNIllustrated(init=[[0.8, 1.2], [2.3, 0.9]]),
-])
+gcn = GCNIllustrated(init=[[1.0, 1.5], [2.0, 1.0]])
 
-print("INITIAL NODE EMBEDDINGS AND WEIGHTS:")
-matricize(x.T)
-for i in range(1):
-    x = gcn[0](x, edge_index.T)
-    print(f"ITERATION {i} Layer 1 NODE EMBEDDINGS AND WEIGHTS:")
-    matricize(x.T)
-    x = gcn[1](x, edge_index.T)
-    print(f"ITERATION {i} Layer 2 NODE EMBEDDINGS AND WEIGHTS:")
-    matricize(x.T)
-    x = gcn[2](x, edge_index.T)
-    print(f"ITERATION {i} Layer 3 NODE EMBEDDINGS AND WEIGHTS:")
-    matricize(x.T)
+# print("INITIAL NODE EMBEDDINGS AND WEIGHTS:")
+matricize(gcn.lin.weight.T)
+# matricize(gcn[1].lin.weight.T)
+# matricize(gcn[2].lin.weight.T)
+
+y = torch.tensor([[1., 0.] for _ in range(len(x))])
+optimizer = torch.optim.SGD(gcn.parameters(), lr=0.001)
+loss_fn = torch.nn.MSELoss()
+
+gcn.train()
+
+for i in range(3):
+    xb = gcn(x, edge_index.T)
+    loss = loss_fn(xb, y)
+    optimizer.zero_grad()
+    loss.backward()
+    optimizer.step()
+    matricize(gcn.lin.weight.T.detach().clone())

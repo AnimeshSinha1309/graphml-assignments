@@ -16,7 +16,7 @@ class GraphIsomorphismNetwork(GraphNeuralNetwork):
             out_channels,
         )
 
-        self.eps = torch.nn.ModuleList([
+        self.eps = torch.nn.ParameterList([
             torch.nn.parameter.Parameter(torch.tensor(0.2))
             for _ in range(layers)
         ])
